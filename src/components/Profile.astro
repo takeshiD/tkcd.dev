@@ -1,0 +1,46 @@
+---
+import { PROFILE, SOCIAL_LINKS } from "../consts";
+
+// ソーシャルアイコンのURLを取得
+function getSocialIconUrl(name: string): string {
+// ローカルアイコンがあればそれを使用、なければSimpleIconsを使用
+const localIcons = ["github", "rss", "email"];
+if (localIcons.includes(name)) {
+return `/icons/${name}.svg`;
+}
+return `https://cdn.simpleicons.org/${name}`;
+}
+---
+
+{
+(PROFILE.avatarUrl || PROFILE.name) && (
+<div class="mb-16 flex items-start">
+    {PROFILE.avatarUrl && (
+    <div
+        class="not-prose mr-5 shrink-0 rounded-full border-[0.5px] border-black/10 bg-white/50 p-3 shadow-sm dark:bg-white/10">
+        <img class:list={[ "my-0 aspect-square w-16 rounded-full bg-black/5 hover:animate-spin" , { "dark:invert" :
+            PROFILE.avatarInvert }, ]} src={PROFILE.avatarUrl} alt={PROFILE.name} />
+    </div>
+    )}
+
+    {PROFILE.name && (
+    <div>
+        <h1 class="mb-2 text-3xl font-bold">{PROFILE.name}</h1>
+        <div class="mb-2 break-words">{PROFILE.bio}</div>
+
+        {SOCIAL_LINKS.length > 0 && (
+        <nav class="flex justify-start space-x-3 dark:invert">
+            {SOCIAL_LINKS.map((social) => (
+            <a class="primary-link h-8 w-8 text-[0px] [background:var(--url)_center_center/cover_no-repeat]"
+                style={`--url: url(${getSocialIconUrl(social.name)})`} href={social.url} target={social.name==="rss" ?
+                undefined : "_blank" } rel={social.name==="rss" ? "alternate" : "me" }>
+                {social.name}
+            </a>
+            ))}
+        </nav>
+        )}
+    </div>
+    )}
+</div>
+)
+}

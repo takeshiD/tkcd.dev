@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 24" width="48" height="24">
+  <!-- Black cat face silhouette (left, for light theme) -->
+  <path d="M2,20 L2,10 L5,3 L8,9 L12,8 L16,9 L19,3 L22,10 L22,20 Q12,22 2,20 Z" fill="#000"/>
+
+  <!-- White cat face silhouette (right, for dark theme) -->
+  <path d="M26,20 L26,10 L29,3 L32,9 L36,8 L40,9 L43,3 L46,10 L46,20 Q36,22 26,20 Z" fill="#FFF"/>
+</svg>

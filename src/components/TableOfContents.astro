@@ -1,0 +1,95 @@
+---
+import { FEATURES } from "../consts";
+
+interface TocItem {
+  depth: number;
+  slug: string;
+  text: string;
+  children: TocItem[];
+}
+
+interface Props {
+  headings: TocItem[];
+  side?: boolean;
+  minLevel?: number;
+  maxLevel?: number;
+}
+
+const {
+  headings,
+  side = false,
+  minLevel = FEATURES.tocMinLevel,
+  maxLevel = FEATURES.tocMaxLevel,
+} = Astro.props;
+
+// 指定レベルでフィルタリング
+const filteredHeadings = headings.filter(
+  (h) => h.depth >= minLevel && h.depth <= maxLevel
+);
+
+// ネスト構造を構築
+function buildToc(headings: TocItem[]): TocItem[] {
+  const result: TocItem[] = [];
+  const stack: TocItem[] = [];
+
+  for (const heading of headings) {
+    const item: TocItem = { ...heading, children: [] };
+
+    while (stack.length > 0 && stack[stack.length - 1].depth >= heading.depth) {
+      stack.pop();
+    }
+
+    if (stack.length === 0) {
+      result.push(item);
+    } else {
+      stack[stack.length - 1].children.push(item);
+    }
+
+    stack.push(item);
+  }
+
+  return result;
+}
+
+const toc = buildToc(filteredHeadings);
+---
+
+{
+  toc.length > 0 && (
+    <nav
+      class:list={[
+        "prose prose-neutral dark:prose-invert",
+        side
+          ? "prose-a:block prose-a:truncate prose-a:font-normal prose-a:secondary-link max-h-lvh overflow-y-auto px-2 pt-18 pb-4"
+          : "block-bg mb-8 rounded-lg p-4 lg:hidden",
+      ]}
+    >
+      <b class={side ? "ml-1.5" : ""}>Table of Contents</b>
+      <ul class="mt-2">
+        {toc.map((h1) => (
+          <li>
+            <a href={`#${h1.slug}`}>{h1.text}</a>
+            {h1.children.length > 0 && (
+              <ul>
+                {h1.children.map((h2) => (
+                  <li>
+                    <a href={`#${h2.slug}`}>{h2.text}</a>
+                    {h2.children.length > 0 && (
+                      <ul>
+                        {h2.children.map((h3) => (
+                          <li>
+                            <a href={`#${h3.slug}`}>{h3.text}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

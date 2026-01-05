@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  prevPost?: CollectionEntry<"blog">;
+  nextPost?: CollectionEntry<"blog">;
+}
+
+const { prevPost, nextPost } = Astro.props;
+---
+
+{
+  (prevPost || nextPost) && (
+    <nav class="not-prose mt-8 flex justify-between gap-4 text-sm">
+      {prevPost ? (
+        <a
+          class="block-bg block-hover flex-1 rounded-lg p-4"
+          href={`/blog/${prevPost.id}`}
+        >
+          <div class="mb-1 opacity-60">Previous</div>
+          <div class="font-medium">{prevPost.data.title}</div>
+        </a>
+      ) : (
+        <div class="flex-1" />
+      )}
+      {nextPost ? (
+        <a
+          class="block-bg block-hover flex-1 rounded-lg p-4 text-right"
+          href={`/blog/${nextPost.id}`}
+        >
+          <div class="mb-1 opacity-60">Next</div>
+          <div class="font-medium">{nextPost.data.title}</div>
+        </a>
+      ) : (
+        <div class="flex-1" />
+      )}
+    </nav>
+  )
+}

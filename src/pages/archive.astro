@@ -1,0 +1,50 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Group posts by year
+const postsByYear = posts.reduce(
+  (acc, post) => {
+    const year = post.data.pubDate.getFullYear();
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(post);
+    return acc;
+  },
+  {} as Record<number, typeof posts>
+);
+
+const years = Object.keys(postsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+
+<BaseLayout title="Archive">
+  <h1 class="mb-8">Archive</h1>
+
+  {
+    years.map((year) => (
+      <section class="mb-8">
+        <h2 class="mb-4 text-2xl font-bold">{year}</h2>
+        <ul class="space-y-2">
+          {postsByYear[year].map((post) => (
+            <li class="flex items-baseline gap-4">
+              <span class="shrink-0 text-sm opacity-60">
+                <FormattedDate date={post.data.pubDate} />
+              </span>
+              <a class="secondary-link" href={`/blog/${post.id}`}>
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</BaseLayout>

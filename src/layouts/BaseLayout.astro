@@ -1,0 +1,64 @@
+---
+import type { ImageMetadata } from "astro";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import { FEATURES } from "../consts";
+
+interface TocItem {
+depth: number;
+slug: string;
+text: string;
+children: TocItem[];
+}
+
+interface Props {
+title: string;
+description?: string;
+image?: ImageMetadata;
+headings?: TocItem[];
+showSideToc?: boolean;
+}
+
+const {
+title,
+description,
+image,
+headings = [],
+showSideToc = false,
+} = Astro.props;
+
+const shouldShowSideToc = showSideToc && FEATURES.sideToc && headings.length > 0;
+---
+
+<!doctype html>
+<html class="not-ready lg:text-base" lang="ja">
+
+<head>
+    <BaseHead title={title} description={description} image={image} />
+</head>
+
+<body class="text-black duration-200 ease-out dark:text-white">
+    <Header />
+
+    <div class="flex">
+        <div class="order-1 hidden w-[calc((100%-var(--container-3xl))/2)] lg:block">
+        </div>
+        {
+        shouldShowSideToc && (
+        <aside class="sticky top-0 order-3 mt-48 hidden h-min w-[calc((100%-var(--container-3xl))/2)] lg:block">
+            <TableOfContents headings={headings} side={true} />
+        </aside>
+        )
+        }
+        <main
+            class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg order-2 mx-auto min-h-[calc(100vh-9rem)] w-full max-w-3xl px-4 pt-24 pb-16 break-words lg:pt-32">
+            <slot />
+        </main>
+    </div>
+
+    <Footer />
+</body>
+
+</html>
