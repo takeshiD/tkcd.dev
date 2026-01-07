@@ -7,7 +7,7 @@ export const SITE_URL = "https://tkcd.dev";
 // Profile
 export const PROFILE = {
   name: "tkcd",
-  bio: "Robotics and System Engineer",
+  bio: "Robotics and Production Engineer",
   avatarUrl: "/images/avatar.svg",
   avatarInvert: true,
 };
