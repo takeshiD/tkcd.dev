@@ -7,9 +7,9 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://tkcd.dev",
-  integrations: [mdx(), sitemap()],
-  vite: {
-    plugins: [tailwindcss()],
-  },
+    site: "https://tkcd.dev",
+    integrations: [mdx(), sitemap()],
+    vite: {
+        plugins: [tailwindcss()],
+    },
 });
