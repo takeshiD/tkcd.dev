@@ -1,0 +1,45 @@
+---
+title: "tmux I/Oの遅延"
+description: ""
+pubDate: 2026-01-12
+tags: ['rust', 'tech', 'tui', 'tmux']
+---
+
+最近自分用のtmux session managerで[tmux-deck](https://github.com/takeshiD/tmux-deck)というCLIを作っている。
+
+<LinkCard url="https://github.com/takeshiD/tmux-deck" />
+
+WSL2の環境では大変快適に動作するのですが、クソ雑魚Laptopではハングしたりプレビュー表示が遅れたりしていてとても困っていた。
+
+マルチスレッドのインターバルがタイミングが厳しすぎるのだろうかと思いチューニングしたり調査していたが**tmux I/Oの遅延**に到達した。
+
+アプリケーションのバックエンドの処理として`tmux capture-pane -e -J -p`をしてバッファを100ms毎に取得する方法やっていたがこれが原因だった。
+
+`tmux capture-pane`はデフォルトではhistory-limitに指定された行数のバッファ履歴を全て取得するので設定次第ではかなり重い処理になる。CPU負荷はもちろんtmuxサーバーのI/O(実質Unix SocketのFile IO)への負荷も大きくなるようだった。
+
+このため
+- ストレージのI/O能力への依存
+- tmuxサーバーへの負荷
+- CPU処理能力
+の3点セットが原因で遅延・ハングが発生したいたようだった。
+
+要は要求するデータ帯域が大きいのでこれを減らせばよく
+
+`tmux capture-pane -S -50`
+
+とすればよい。`-S -50`はバッファを最下段から50行キャプチャする指定となる。これを指定することで格段に軽量化した。
+
+なかなか面倒だったがスッキリしたし学びになった。
+
+なおこういう調査でChatGPTやClaude, Codexも使ったが一発ではなかなか原因にたどり着かずいくらか遠回りした。
+
+最後にデスクトップとLaptopのスペック比較表を記載する。
+
+> ![NOTE]
+> 今度書くよ
+
+| 項目     | デスクトップ                  | Laptop                         |
+| ------   | ------------                  | --------                       |
+| CPU      | 4.8GHz 8c(AMD Ryzen7 7800X3D) | 1.8GHz 4c(Intel Corei7-10510U) |
+| RAM      | 32GB                          | 16Gb                           |
+| SSD(R/W) | 976/683 MB/s                  | ? MB/s                         |
