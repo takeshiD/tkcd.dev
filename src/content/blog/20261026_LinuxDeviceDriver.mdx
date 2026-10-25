@@ -1,0 +1,44 @@
+---
+title: "Linux Device Driver 入門"
+description: "デバドラ入門"
+pubDate: 2026-10-26
+tags: ['linux']
+draft: true
+---
+
+
+業務で少し必要なのと、今まで避けていた分野なのでできるだけ理解したくやってみた
+
+カーネルレベルのプログラムは初めて
+
+悲しいのは書籍レベルだとカーネルバージョンが古い内容が多くて、行間をうまく人間側で埋める必要があること。現代ではLLMがついているのでわからん箇所はすぐ聞いて疑問解決ができるのはすごくいい
+
+一通りエッセンスを習得してせっかくなのでRustでの実装、そして自宅のSwitchbotなどのbluetooth経由でデータ取得できる機器と通信(受信)してみる、くらいまでを目標にしようと思う
+
+# TOC
+1. Linux Device Driverの概要
+2. Character Device
+    2.1 C言語での実装
+    2.2 Rustでの実装
+3. Bluetooth VHCI Device
+    3.2 C言語での実装
+    3.3 Rustでの実装
+4. 参考文献
+
+# 1. Linux Device Driverの概要
+デバイスドライバとはデバイスを操作するための専用ソフトウェアをさします。
+USB機器、ネットワークデバイス、Bluetoothチップ、プリンタなど様々な周辺機器を制御するためのものです。これが無いとマウスやキーボードも動かせません。
+
+これだけいえば比較的シンプルなイメージですが、実際には複雑なケースもあります。
+
+例えば世の中には**BluetoothのUSBドングル**というものがあります。これは面白いところで以下のように複数のレイヤーを介して実現しています。
+
+USBドングル <--> USBデバイスドライバ <--> HCI <--> Bluetoothスタック
+
+
+# 4. 参考文献
+- [Linux Kernel - Driver implementer's API Guide](https://www.kernel.org/doc/html/latest/driver-api/index.html)
+- [Linux Device Driver 3rd Edition](https://lwn.net/Kernel/LDD3/)
+- [Qiita - 組み込みLinuxデバイスドライバの作り方](https://qiita.com/iwatake2222/items/1fdd2e0faaaa868a2db2)
+- [Github - scull](https://github.com/starpos/scull)
+- [デバイスドライバを作ることになってしまった人へ](https://rde.fwex.tohoku-gakuin.ac.jp/rde/contents/linux/drivers/indexframe.html)
